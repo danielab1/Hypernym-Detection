@@ -13,15 +13,27 @@ public class Main {
                 .withRegion("us-east-1")
                 .build();
 
-        HadoopJarStepConfig hadoopJarStep0 = new HadoopJarStepConfig()
+        HadoopJarStepConfig hadoopJarStep1 = new HadoopJarStepConfig()
+                .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-test.jar") //parse the biarcs
+                .withMainClass("TestMain")
+                .withArgs("","s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out1/");
+        HadoopJarStepConfig hadoopJarStep2 = new HadoopJarStepConfig()
                 .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-test.jar") // This should be a full map reduce application.
                 .withMainClass("TestMain")
-                .withArgs("","s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out/");
+                .withArgs("","s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out2/");
+        HadoopJarStepConfig hadoopJarStep3 = new HadoopJarStepConfig()
+                .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-test.jar") // merge Dpath.
+                .withMainClass("TestMain")
+                .withArgs("","s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out3/");
+        HadoopJarStepConfig hadoopJarStep4 = new HadoopJarStepConfig()
+                .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-test.jar") // Final step . create vectors
+                .withMainClass("TestMain")
+                .withArgs("","s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out2/");
 
 
         StepConfig TestConfig = new StepConfig()
                 .withName("TestJob")
-                .withHadoopJarStep(hadoopJarStep0)
+                .withHadoopJarStep(hadoopJarStep1)
                 .withActionOnFailure("TERMINATE_JOB_FLOW");
 
         JobFlowInstancesConfig instances = new JobFlowInstancesConfig()
@@ -51,16 +63,3 @@ public class Main {
     }
 }
 
-
-//        BufferedReader bufferRead = new BufferedReader(new FileReader(args[0]));
-//        String line = bufferRead.readLine();
-//        while (line != null) {
-//            String[] data = line.split("\t");
-////            String[] syntacticNgram = data[1].split(" ");
-////            for (String s : syntacticNgram) {
-//                if(data[0].charAt(0)>='a') {
-//                    System.out.println(line);
-//                }
-////            }
-//            line = bufferRead.readLine();
-//        }

@@ -12,16 +12,15 @@ import java.util.Set;
 public class R1Reducer extends Reducer<Text, Text, Text, Text> {
     private MultipleOutputs mos;
     private int dpMin;
-    private Set<Text> set;
     @Override
     public void setup(Context context) throws IOException, InterruptedException {
-        set = new HashSet<>();
         mos = new MultipleOutputs(context);
         dpMin = context.getConfiguration().getInt("dpMinValue",5);
     }
 
     @Override
     public void reduce(Text dpPath, Iterable<Text> values, Context context) throws IOException,  InterruptedException {
+         Set<Text> set = new HashSet<>();
         boolean valid = false;
         for(Text pair: values){
             if(!set.contains(pair) && set.size() < dpMin){

@@ -8,8 +8,10 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/Round1" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/main/Round2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/Round3" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/RoundTest" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/Round2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/Round4" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

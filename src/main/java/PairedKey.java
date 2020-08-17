@@ -19,6 +19,11 @@ public class PairedKey implements WritableComparable {
         this.pair = new Text(pair);
     }
 
+    public PairedKey() {
+        this.dpPath = null;
+        this.pair = null;
+    }
+
     public Text getDpPath() {
         return dpPath;
     }
