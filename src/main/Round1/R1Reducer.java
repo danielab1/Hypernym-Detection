@@ -18,17 +18,18 @@ public class R1Reducer extends Reducer<Text, Text, Text, Text> {
 
     @Override
     public void reduce(Text dpPath, Iterable<Text> values, Context context) throws IOException,  InterruptedException {
-         Set<Text> set = new HashSet<>();
-        boolean valid = false;
+        Set<Text> set = new HashSet<>();
+        boolean valid = true;
         for(Text pair: values){
             if(!set.contains(pair) && set.size() < dpMin){
                 set.add(pair);
-            } else if(dpMin <= set.size()){
-                valid = true;
-                mos.write("DP", dpPath, new Text(""));
-                break;
+//            } else if(dpMin <= set.size()){
+//                valid = true;
+//                mos.write("DP", dpPath, new Text(""));
+//                break;
             }
         }
+        mos.write("DP", dpPath, new Text(""));
         if(valid){
             for(Text pair: values){
                 context.write(dpPath, pair);
@@ -38,6 +39,6 @@ public class R1Reducer extends Reducer<Text, Text, Text, Text> {
 
     @Override
     public void cleanup(Context context)  throws IOException, InterruptedException {
-
+        mos.close();
     }
 }

@@ -13,17 +13,17 @@ import java.io.IOException;
 public class R1Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf,"Step0Job");
-        job.setJarByClass(Main.class);
+        conf.setInt("dpMinValue", Integer.parseInt(args[1]));
+        Job job = Job.getInstance(conf,"Step1Job");
+        job.setJarByClass(R1Main.class);
         job.setMapperClass(R1Mapper.class);
         job.setReducerClass(R1Reducer.class);
-        job.setNumReduceTasks(2);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        FileInputFormat.addInputPath(job, new Path(args[2]));
+        FileOutputFormat.setOutputPath(job, new Path(args[3]));
 
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
