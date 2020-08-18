@@ -14,32 +14,38 @@ public class Main {
                 .build();
 
         HadoopJarStepConfig hadoopJarStep1 = new HadoopJarStepConfig()
-                .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-test.jar") //parse the biarcs
-                .withMainClass("TestMain")
-                .withArgs("","s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out1/");
-        HadoopJarStepConfig hadoopJarStep2 = new HadoopJarStepConfig()
-                .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-test.jar") // This should be a full map reduce application.
-                .withMainClass("TestMain")
-                .withArgs("","s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out2/");
-        HadoopJarStepConfig hadoopJarStep3 = new HadoopJarStepConfig()
-                .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-test.jar") // merge Dpath.
-                .withMainClass("TestMain")
-                .withArgs("","s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out3/");
-        HadoopJarStepConfig hadoopJarStep4 = new HadoopJarStepConfig()
-                .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-test.jar") // Final step . create vectors
-                .withMainClass("TestMain")
-                .withArgs("","s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out2/");
-
-
-        StepConfig TestConfig = new StepConfig()
-                .withName("TestJob")
+                .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-step1.jar") //parse the biarcs
+                .withMainClass("R1Main")
+                .withArgs("s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out1/");
+        StepConfig step1Config = new StepConfig()
+                .withName("Step1Job")
                 .withHadoopJarStep(hadoopJarStep1)
                 .withActionOnFailure("TERMINATE_JOB_FLOW");
 
+        HadoopJarStepConfig hadoopJarStep2 = new HadoopJarStepConfig()
+                .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-step2.jar") // This should be a full map reduce application.
+                .withMainClass("R2Main")
+                .withArgs("s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out2/");
+        StepConfig step2Config = new StepConfig()
+                .withName("Step2Job")
+                .withHadoopJarStep(hadoopJarStep2)
+                .withActionOnFailure("TERMINATE_JOB_FLOW");
+
+        HadoopJarStepConfig hadoopJarStep3 = new HadoopJarStepConfig()
+                .withJar("s3n://dsp-ass3-hadoop/dsp-ass3-step3.jar") // merge Dpath.
+                .withMainClass("R3Main")
+                .withArgs("s3n://dsp-ass3-hadoop/input/", "s3n://dsp-ass3-hadoop/out3/");
+        StepConfig step3Config = new StepConfig()
+                .withName("Step3Job")
+                .withHadoopJarStep(hadoopJarStep3)
+                .withActionOnFailure("TERMINATE_JOB_FLOW");
+
+
+
         JobFlowInstancesConfig instances = new JobFlowInstancesConfig()
                 .withInstanceCount(2)
-                .withMasterInstanceType(InstanceType.T2Medium.toString())
-                .withSlaveInstanceType(InstanceType.T2Medium.toString())
+                .withMasterInstanceType(InstanceType.M4Large.toString())
+                .withSlaveInstanceType(InstanceType.M4Large.toString())
                 .withHadoopVersion("2.10.0")
                 .withEc2KeyName("dsp-ass2-ec2")
                 .withKeepJobFlowAliveWhenNoSteps(false)
@@ -48,7 +54,7 @@ public class Main {
         RunJobFlowRequest runFlowRequest = new RunJobFlowRequest()
                 .withName("TestJob")
                 .withInstances(instances)
-                .withSteps(TestConfig)
+                .withSteps(step1Config)
                 .withJobFlowRole("EMR_EC2_DefaultRole")
                 .withServiceRole("EMR_DefaultRole")
                 .withLogUri("s3n://dsp-ass3-hadoop/logs/")

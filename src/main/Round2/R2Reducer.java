@@ -10,7 +10,6 @@ public class R2Reducer extends Reducer<Text,Text,LongWritable, Text> {
 
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-
         context.write(new LongWritable(index),key);
         index++;
     }
