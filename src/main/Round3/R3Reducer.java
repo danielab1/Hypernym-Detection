@@ -37,7 +37,7 @@ public class R3Reducer extends Reducer<PairedKey, LongWritable, Text, Text> {
         S3Object o = null;
 
         try {
-            S3Object object = s3.getObject(new GetObjectRequest("arn:aws:s3:::dsp-ass3-hadoop", "out"));
+            S3Object object = s3.getObject(new GetObjectRequest("arn:aws:s3:::dsp-ass3-hadoop", "out2/"));
             BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
 
             while (true) {

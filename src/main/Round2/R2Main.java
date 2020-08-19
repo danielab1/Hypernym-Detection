@@ -16,6 +16,9 @@ public class R2Main { //ROUND for merge all the DP to one file.
          Job job = Job.getInstance(conf, "Step2Job");
          job.setJarByClass(R2Main.class);
          job.setMapperClass(R2Mapper.class);
+         job.setMapOutputKeyClass(Text.class);
+         job.setMapOutputValueClass(Text.class);
+
          job.setReducerClass(R2Reducer.class);
          job.setNumReduceTasks(1);
 
