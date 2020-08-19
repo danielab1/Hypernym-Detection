@@ -10,26 +10,28 @@ import java.util.Set;
 public class R1Reducer extends Reducer<Text, Text, Text, Text> {
     private MultipleOutputs mos;
     private int dpMin;
+    private String DPOutputPath;
     @Override
     public void setup(Context context) throws IOException, InterruptedException {
         mos = new MultipleOutputs(context);
         dpMin = context.getConfiguration().getInt("dpMinValue",5);
+        String[] outputs = context.getConfiguration().getStrings("DPOutputPath");;
+        DPOutputPath = outputs[0];
     }
 
     @Override
     public void reduce(Text dpPath, Iterable<Text> values, Context context) throws IOException,  InterruptedException {
         Set<Text> set = new HashSet<>();
-        boolean valid = true;
+        boolean valid = false;
         for(Text pair: values){
             if(!set.contains(pair) && set.size() < dpMin){
                 set.add(pair);
-//            } else if(dpMin <= set.size()){
-//                valid = true;
-//                mos.write("DP", dpPath, new Text(""));
-//                break;
+            } else if(dpMin <= set.size()){
+                valid = true;
+                mos.write("DP", dpPath, new Text(""), "DPOutputPath");
+                break;
             }
         }
-        mos.write("DP", dpPath, new Text(""));
         if(valid){
             for(Text pair: values){
                 context.write(dpPath, pair);

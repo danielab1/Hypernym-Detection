@@ -21,7 +21,7 @@ public class Main {
         HadoopJarStepConfig hadoopJarStep1 = new HadoopJarStepConfig()
                 .withJar("s3n://dsp-ass3-hadoop2/jars/dsp-ass3-step1.jar") //parse the biarcs
                 .withMainClass("R1Main")
-                .withArgs("1","s3n://dsp-ass3-hadoop2/input/", "s3n://dsp-ass3-hadoop2/out1/");
+                .withArgs("5","s3n://dsp-ass3-hadoop2/input/", "s3n://dsp-ass3-hadoop2/out1/");
         StepConfig step1Config = new StepConfig()
                 .withName("Step1Job")
                 .withHadoopJarStep(hadoopJarStep1)
