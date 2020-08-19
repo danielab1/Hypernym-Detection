@@ -14,33 +14,41 @@ import org.apache.hadoop.mapreduce.Reducer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
-public class R3Reducer extends Reducer<PairedKey, LongWritable, Text, Text> {
+public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
     private AmazonS3 s3;
-    private Text lastDp;
-    private long dpInd;
+    private Map<String, Boolean> annotatedSet;
+    private String lastPair;
     @Override
     public void setup(Context context) throws IOException, InterruptedException {
         s3 = AmazonS3ClientBuilder.standard()
                 .withRegion(Regions.US_EAST_1)
                 .withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
                 .build();
-        lastDp = new Text("");
+        lastPair = null;
+        annotatedSet = new HashMap<>();
+        loadAnnotatedSet();
     }
 
     @Override
-    public void reduce(PairedKey key, Iterable<LongWritable> values, Context context) throws IOException,  InterruptedException {
+    public void reduce(FeaturePair key, Iterable<LongWritable> values, Context context) throws IOException,  InterruptedException {
+        String keyPair = key.getPair().toString();
+        if(lastPair == null || !keyPair.equals(lastPair)){
+            String annotation = "NA";
+            if(annotatedSet.containsKey(keyPair)){
+                annotation = annotatedSet.get(keyPair).toString();
+            }
+            context.write(key.getPair(), new Text("-1,"+annotation));
+            lastPair = keyPair;
+        }
 
-        long count = 0;
-        for(LongWritable value : values ) {
-            count = count + value.get();
+        for(LongWritable count: values){
+            context.write(key.getPair(), new Text(key.getDpInd()+","+count));
         }
-        if(!lastDp.toString().equals(key.getDpPath().toString())){
-            updateDpPathInd(key);
-        }
-        context.write(key.getPair(), new Text(dpInd+","+count));
     }
 
     @Override
@@ -48,32 +56,26 @@ public class R3Reducer extends Reducer<PairedKey, LongWritable, Text, Text> {
 
     }
 
-    private void updateDpPathInd(PairedKey key){
-        ObjectListing listing = s3.listObjects( "dsp-ass3-hadoop3", "dp_merge/" );
-        List<S3ObjectSummary> summaries = listing.getObjectSummaries();
-        for(S3ObjectSummary summary: summaries){
-            searchDpInBucket(key, summary.getKey());
-        }
+    private String stemWord(String wordRaw){
+        Stemmer stemmer = new Stemmer();
+        char[] wordAsChar = wordRaw.toCharArray();
+        stemmer.add(wordAsChar, wordAsChar.length);
+        stemmer.stem();
+        return stemmer.toString();
     }
-
-    private void searchDpInBucket(PairedKey key, String pathToFile){
-
+    private void loadAnnotatedSet(){
         try {
-            S3Object object = s3.getObject(new GetObjectRequest("dsp-ass3-hadoop3", pathToFile));
+            S3Object object = s3.getObject(new GetObjectRequest("dsp-ass3-hadoop3", "/annotated/hypernym.txt"));
             BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
-            boolean found = false;
-            while (!found) {
+
+            while (true) {
                 String line = reader.readLine();
                 if (line == null)
                     break;
 
                 String[] content = line.split("\t");
-                long ind = Long.parseLong(content[0]);
-                String dpPath = content[1];
-                if((found = dpPath.equals(key.getDpPath().toString()))){
-                    dpInd = ind;
-                    lastDp = new Text(key.getDpPath().toString());
-                }
+                String pair = stemWord(content[0])+" "+stemWord(content[1]);
+                annotatedSet.putIfAbsent(pair, Boolean.parseBoolean(content[2]));
 
             }
 

@@ -5,7 +5,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
 
-public class R3Mapper extends Mapper<LongWritable, Text, PairedKey, LongWritable> {
+public class R3Mapper extends Mapper<Text, Text, PairedKey, LongWritable> {
 
 
 //    Reducer ((dbPath, pair), [count])
@@ -15,9 +15,8 @@ public class R3Mapper extends Mapper<LongWritable, Text, PairedKey, LongWritable
         Configuration conf = context.getConfiguration();
     }
 
-    public void map(LongWritable lineId, Text line, Context context) throws IOException, InterruptedException {
-        String[] props = line.toString().split("\t");
-        context.write(new PairedKey(props[0], props[1]), new LongWritable(1));
+    public void map(Text dpPath, Text pair, Context context) throws IOException, InterruptedException {
+        context.write(new PairedKey(dpPath, pair), new LongWritable(1));
 
     }
 }

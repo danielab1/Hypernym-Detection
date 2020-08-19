@@ -2,5 +2,6 @@
 
 .idea/
 target/
-*/*/*/out/
+*/*/*/out/META-INF/
+*.jar
 src/main/java/Tests.java

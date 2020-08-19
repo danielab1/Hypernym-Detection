@@ -28,16 +28,16 @@ public class Main {
                 .standard()
                 .withRegion("us-east-1")
                 .build();
-//
-//        HadoopJarStepConfig hadoopJarStep1 = new HadoopJarStepConfig()
-//                .withJar("s3n://dsp-ass3-hadoop3/jars/dsp-ass3-step1.jar") //parse the biarcs
-//                .withMainClass("R1Main")
-//                .withArgs("1","s3n://dsp-ass3-hadoop3/input/", "s3n://dsp-ass3-hadoop3/out1/");
-//        StepConfig step1Config = new StepConfig()
-//                .withName("Step1Job")
-//                .withHadoopJarStep(hadoopJarStep1)
-//                .withActionOnFailure("TERMINATE_JOB_FLOW");
-//
+
+        HadoopJarStepConfig hadoopJarStep1 = new HadoopJarStepConfig()
+                .withJar("s3n://dsp-ass3-hadoop3/jars/dsp-ass3-step1.jar") //parse the biarcs
+                .withMainClass("R1Main")
+                .withArgs("5","s3n://dsp-ass3-hadoop3/input/", "s3n://dsp-ass3-hadoop3/out1/");
+        StepConfig step1Config = new StepConfig()
+                .withName("Step1Job")
+                .withHadoopJarStep(hadoopJarStep1)
+                .withActionOnFailure("TERMINATE_JOB_FLOW");
+
         HadoopJarStepConfig hadoopJarStep2 = new HadoopJarStepConfig()
                 .withJar("s3n://dsp-ass3-hadoop3/jars/dsp-ass3-step2.jar") // merge Dpath.
                 .withMainClass("R2Main")
@@ -48,17 +48,25 @@ public class Main {
                 .withName("Step2Job")
                 .withHadoopJarStep(hadoopJarStep2)
                 .withActionOnFailure("TERMINATE_JOB_FLOW");
-//
-//        HadoopJarStepConfig hadoopJarStep3 = new HadoopJarStepConfig()
-//                .withJar("s3n://dsp-ass3-hadoop3/dsp-ass3-step3.jar") // create feature vector
-//                .withMainClass("R3Main")
-//                .withArgs("s3n://dsp-ass3-hadoop3/input/", "s3n://dsp-ass3-hadoop3/out3/");
-//        StepConfig step3Config = new StepConfig()
-//                .withName("Step3Job")
-//                .withHadoopJarStep(hadoopJarStep3)
-//                .withActionOnFailure("TERMINATE_JOB_FLOW");
-//
-//
+
+        HadoopJarStepConfig hadoopJarStep3 = new HadoopJarStepConfig()
+                .withJar("s3n://dsp-ass3-hadoop3/jars/dsp-ass3-step3.jar") // create feature vector
+                .withMainClass("R3Main")
+                .withArgs("s3n://dsp-ass3-hadoop3/out1/", "s3n://dsp-ass3-hadoop3/out3/");
+        StepConfig step3Config = new StepConfig()
+                .withName("Step3Job")
+                .withHadoopJarStep(hadoopJarStep3)
+                .withActionOnFailure("TERMINATE_JOB_FLOW");
+
+        HadoopJarStepConfig hadoopJarStep4 = new HadoopJarStepConfig()
+                .withJar("s3n://dsp-ass3-hadoop3/jars/dsp-ass3-step4.jar") // create feature vector
+                .withMainClass("R4Main")
+                .withArgs("s3n://dsp-ass3-hadoop3/out3/", "s3n://dsp-ass3-hadoop3/out4/");
+        StepConfig step4Config = new StepConfig()
+                .withName("Step4Job")
+                .withHadoopJarStep(hadoopJarStep4)
+                .withActionOnFailure("TERMINATE_JOB_FLOW");
+
         JobFlowInstancesConfig instances = new JobFlowInstancesConfig()
                 .withInstanceCount(2)
                 .withMasterInstanceType(InstanceType.M4Large.toString())
@@ -67,16 +75,16 @@ public class Main {
                 .withEc2KeyName("dsp-ass3-ec2")
                 .withKeepJobFlowAliveWhenNoSteps(false)
                 .withPlacement(new PlacementType("us-east-1a"));
-//
+
         RunJobFlowRequest runFlowRequest = new RunJobFlowRequest()
                 .withName("TestJob")
                 .withInstances(instances)
-                .withSteps(step2Config)
+                .withSteps(step4Config)
                 .withJobFlowRole("EMR_EC2_DefaultRole")
                 .withServiceRole("EMR_DefaultRole")
                 .withLogUri("s3n://dsp-ass3-hadoop3/logs/")
                 .withReleaseLabel("emr-5.20.0");
-//
+
 
         RunJobFlowResult runJobFlowResult = emr.runJobFlow(runFlowRequest);
         String jobFlowId = runJobFlowResult.getJobFlowId();

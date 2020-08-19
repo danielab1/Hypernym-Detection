@@ -5,23 +5,20 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
 
-public class R3Main {
+public class R4Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf,"Step3Job");
-        job.setJarByClass(R3Main.class);
-        job.setMapperClass(R3Mapper.class);
-        job.setReducerClass(R3Reducer.class);
-        job.setPartitionerClass(R3Partitioner.class);
-
-        job.setMapOutputKeyClass(PairedKey.class);
+        Job job = Job.getInstance(conf,"Step4Job");
+        job.setJarByClass(R4Main.class);
+        job.setMapperClass(R4Mapper.class);
+        job.setReducerClass(R4Reducer.class);
+        job.setPartitionerClass(R4Partitioner.class);
+        job.setMapOutputKeyClass(FeaturePair.class);
         job.setMapOutputValueClass(LongWritable.class);
 
         job.setOutputKeyClass(Text.class);

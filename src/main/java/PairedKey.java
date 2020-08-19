@@ -20,8 +20,8 @@ public class PairedKey implements WritableComparable {
     }
 
     public PairedKey() {
-        this.dpPath = null;
-        this.pair = null;
+        this.dpPath = new Text("");
+        this.pair = new Text("");
     }
 
     public Text getDpPath() {
@@ -44,7 +44,11 @@ public class PairedKey implements WritableComparable {
 
     @Override
     public int compareTo(Object o) {
-        return this.dpPath.compareTo(((PairedKey) o).getDpPath());
+        PairedKey otherPair = (PairedKey) o;
+        if(dpPath.toString().equals(otherPair.getDpPath().toString())){
+            return pair.toString().compareTo(otherPair.getPair().toString());
+        }
+        return this.dpPath.compareTo(otherPair.getDpPath());
     }
 
     @Override

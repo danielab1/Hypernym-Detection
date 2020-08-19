@@ -100,13 +100,13 @@ Round2
         S3dpPaths
 
     Mapper (dpPath, pair)
-        content.write((dpPath, pair, ind), 1)
+        content.write((dpPath, pair), 1)
         // can't do (dbPath, pair) because
         this way I will have to go through all the list to count how many times
         each pair appeared as this dp
 
 
-    Reducer ((dbPath, pair, ind), [count])
+    Reducer ((dbPath, pair), [count])
         //if this is the first time this dbPath appears, save it's row line in s3
         content.write(
 
