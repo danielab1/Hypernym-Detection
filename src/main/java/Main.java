@@ -30,18 +30,18 @@ public class Main {
                 .build();
 
         HadoopJarStepConfig hadoopJarStep1 = new HadoopJarStepConfig()
-                .withJar("s3n://dsp-ass3-hadoop3/jars/dsp-ass3-step1.jar") //parse the biarcs
+                .withJar("s3n://dsp-ass3-hadoop2/jars/dsp-ass3-step1.jar") //parse the biarcs
                 .withMainClass("R1Main")
-                .withArgs("5","s3n://dsp-ass3-hadoop3/input/", "s3n://dsp-ass3-hadoop3/out1/");
+                .withArgs("5","s3n://dsp-ass3-hadoop2/input/", "s3n://dsp-ass3-hadoop2/out1/");
         StepConfig step1Config = new StepConfig()
                 .withName("Step1Job")
                 .withHadoopJarStep(hadoopJarStep1)
                 .withActionOnFailure("TERMINATE_JOB_FLOW");
 
         HadoopJarStepConfig hadoopJarStep2 = new HadoopJarStepConfig()
-                .withJar("s3n://dsp-ass3-hadoop3/jars/dsp-ass3-step2.jar") // merge Dpath.
+                .withJar("s3n://dsp-ass3-hadoop2/jars/dsp-ass3-step2.jar") // merge Dpath.
                 .withMainClass("R2Main")
-                .withArgs("s3n://dsp-ass3-hadoop3/dp/", "s3n://dsp-ass3-hadoop3/dp_merge/");
+                .withArgs("s3n://dsp-ass3-hadoop2/dp/", "s3n://dsp-ass3-hadoop2/dp_merge/");
 
 
         StepConfig step2Config = new StepConfig()
@@ -50,18 +50,18 @@ public class Main {
                 .withActionOnFailure("TERMINATE_JOB_FLOW");
 
         HadoopJarStepConfig hadoopJarStep3 = new HadoopJarStepConfig()
-                .withJar("s3n://dsp-ass3-hadoop3/jars/dsp-ass3-step3.jar") // create feature vector
+                .withJar("s3n://dsp-ass3-hadoop2/jars/dsp-ass3-step3.jar") // create feature vector
                 .withMainClass("R3Main")
-                .withArgs("s3n://dsp-ass3-hadoop3/out1/", "s3n://dsp-ass3-hadoop3/out3/");
+                .withArgs("s3n://dsp-ass3-hadoop2/out1/", "s3n://dsp-ass3-hadoop2/out3/");
         StepConfig step3Config = new StepConfig()
                 .withName("Step3Job")
                 .withHadoopJarStep(hadoopJarStep3)
                 .withActionOnFailure("TERMINATE_JOB_FLOW");
 
         HadoopJarStepConfig hadoopJarStep4 = new HadoopJarStepConfig()
-                .withJar("s3n://dsp-ass3-hadoop3/jars/dsp-ass3-step4.jar") // create feature vector
+                .withJar("s3n://dsp-ass3-hadoop2/jars/dsp-ass3-step4.jar") // create feature vector
                 .withMainClass("R4Main")
-                .withArgs("s3n://dsp-ass3-hadoop3/out3/", "s3n://dsp-ass3-hadoop3/out4/");
+                .withArgs("s3n://dsp-ass3-hadoop2/out3/", "s3n://dsp-ass3-hadoop2/out4/");
         StepConfig step4Config = new StepConfig()
                 .withName("Step4Job")
                 .withHadoopJarStep(hadoopJarStep4)
@@ -82,7 +82,7 @@ public class Main {
                 .withSteps(step4Config)
                 .withJobFlowRole("EMR_EC2_DefaultRole")
                 .withServiceRole("EMR_DefaultRole")
-                .withLogUri("s3n://dsp-ass3-hadoop3/logs/")
+                .withLogUri("s3n://dsp-ass3-hadoop2/logs/")
                 .withReleaseLabel("emr-5.20.0");
 
 

@@ -49,7 +49,7 @@ public class R3Reducer extends Reducer<PairedKey, LongWritable, Text, Text> {
     }
 
     private void updateDpPathInd(PairedKey key){
-        ObjectListing listing = s3.listObjects( "dsp-ass3-hadoop3", "dp_merge/" );
+        ObjectListing listing = s3.listObjects( "dsp-ass3-hadoop2", "dp-merge/" );
         List<S3ObjectSummary> summaries = listing.getObjectSummaries();
         for(S3ObjectSummary summary: summaries){
             searchDpInBucket(key, summary.getKey());

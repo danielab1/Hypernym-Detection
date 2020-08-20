@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 public class R1Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         Configuration conf = new Configuration();
-        conf.setInt("dpMinValue", Integer.parseInt(args[0]));
+        conf.setInt("dpMinValue", Integer.parseInt(args[1]));
 //        String[] dpPathArr = new String[]{Paths.get(args[3], "DPPaths").toString()};
 //        String[] dpPathArr = new String[]{"s3n://dsp-ass3-hadoop2/out1/dpPaths/"};
 
@@ -28,8 +28,8 @@ public class R1Main {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
-        FileInputFormat.addInputPath(job, new Path(args[1]));
-        FileOutputFormat.setOutputPath(job, new Path(args[2]));
+        FileInputFormat.addInputPath(job, new Path(args[2]));
+        FileOutputFormat.setOutputPath(job, new Path(args[3]));
 
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);

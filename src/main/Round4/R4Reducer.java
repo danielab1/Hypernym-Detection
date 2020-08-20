@@ -65,7 +65,7 @@ public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
     }
     private void loadAnnotatedSet(){
         try {
-            S3Object object = s3.getObject(new GetObjectRequest("dsp-ass3-hadoop3", "/annotated/hypernym.txt"));
+            S3Object object = s3.getObject(new GetObjectRequest("dsp-ass3-hadoop2", "/annotated/hypernym.txt"));
             BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
 
             while (true) {
