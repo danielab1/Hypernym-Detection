@@ -1,7 +1,9 @@
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
@@ -20,15 +22,10 @@ import java.util.Map;
 
 
 public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
-    private AmazonS3 s3;
-    private Map<String, Boolean> annotatedSet;
+    private HashMap<String, Boolean> annotatedSet;
     private String lastPair;
     @Override
     public void setup(Context context) throws IOException, InterruptedException {
-        s3 = AmazonS3ClientBuilder.standard()
-                .withRegion(Regions.US_EAST_1)
-                .withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
-                .build();
         lastPair = null;
         annotatedSet = new HashMap<>();
         loadAnnotatedSet();
@@ -37,7 +34,7 @@ public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
     @Override
     public void reduce(FeaturePair key, Iterable<LongWritable> values, Context context) throws IOException,  InterruptedException {
         String keyPair = key.getPair().toString();
-        if(lastPair == null || !keyPair.equals(lastPair)){
+        if(!keyPair.equals(lastPair)){
             String annotation = "NA";
             if(annotatedSet.containsKey(keyPair)){
                 annotation = annotatedSet.get(keyPair).toString();
@@ -64,8 +61,9 @@ public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
         return stemmer.toString();
     }
     private void loadAnnotatedSet(){
+        AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion("us-east-1").build();
         try {
-            S3Object object = s3.getObject(new GetObjectRequest("dsp-ass3-hadoop2", "/annotated/hypernym.txt"));
+            S3Object object = s3.getObject(new GetObjectRequest("dsp-ass3-hadoop2", "annotated/hypernym.txt"));
             BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
 
             while (true) {
@@ -78,13 +76,17 @@ public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
                 annotatedSet.putIfAbsent(pair, Boolean.parseBoolean(content[2]));
 
             }
+            reader.close();
 
         } catch (AmazonServiceException e) {
-            System.err.println(e.getErrorMessage());
-            System.exit(1);
+            System.out.println(e.getErrorMessage());
+            System.out.println(e.getMessage());
+            System.out.println("aws problem");
+            System.exit(3);
         } catch (IOException e) {
             System.err.println(e.getMessage());
-            System.exit(1);
+            System.err.println("in IOException");
+            System.exit(5);
         }
     }
 }

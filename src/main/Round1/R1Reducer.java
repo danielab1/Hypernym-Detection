@@ -21,7 +21,7 @@ public class R1Reducer extends Reducer<Text, Text, Text, Text> {
 
     @Override
     public void reduce(Text dpPath, Iterable<Text> nounPairs, Context context) throws IOException,  InterruptedException {
-        Set<Text> set = new HashSet<>(dpMin);
+        Set<Text> set = new HashSet<>();
         boolean valid = false;
         for(Text pair: nounPairs){
             if(!set.contains(pair) && set.size() < dpMin){

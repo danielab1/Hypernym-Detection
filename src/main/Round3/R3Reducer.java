@@ -49,7 +49,7 @@ public class R3Reducer extends Reducer<PairedKey, LongWritable, Text, Text> {
     }
 
     private void updateDpPathInd(PairedKey key){
-        ObjectListing listing = s3.listObjects( "dsp-ass3-hadoop2", "dp-merge/" );
+        ObjectListing listing = s3.listObjects( "dsp-ass3-hadoop2", "dp_merge/" );
         List<S3ObjectSummary> summaries = listing.getObjectSummaries();
         for(S3ObjectSummary summary: summaries){
             searchDpInBucket(key, summary.getKey());
@@ -59,7 +59,7 @@ public class R3Reducer extends Reducer<PairedKey, LongWritable, Text, Text> {
     private void searchDpInBucket(PairedKey key, String pathToFile){
 
         try {
-            S3Object object = s3.getObject(new GetObjectRequest("dsp-ass3-hadoop3", pathToFile));
+            S3Object object = s3.getObject(new GetObjectRequest("dsp-ass3-hadoop2", pathToFile));
             BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
             boolean found = false;
             while (!found) {
@@ -78,8 +78,9 @@ public class R3Reducer extends Reducer<PairedKey, LongWritable, Text, Text> {
             }
 
         } catch (AmazonServiceException e) {
-            System.err.println(e.getErrorMessage());
-            System.exit(1);
+            System.out.println(e.getErrorMessage());
+            System.out.println(e.getMessage());
+            System.exit(2);
         } catch (IOException e) {
             System.err.println(e.getMessage());
             System.exit(1);
