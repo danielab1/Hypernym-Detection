@@ -15,11 +15,6 @@ public class R1Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         Configuration conf = new Configuration();
         conf.setInt("dpMinValue", Integer.parseInt(args[1]));
-//        String[] dpPathArr = new String[]{Paths.get(args[3], "DPPaths").toString()};
-//        String[] dpPathArr = new String[]{"s3n://dsp-ass3-hadoop2/out1/dpPaths/"};
-
-//        System.out.println(dpPathArr[0]);
-//        conf.setStrings("DPOutputPath",dpPathArr);
         Job job = Job.getInstance(conf,"Step1Job");
         job.setJarByClass(R1Main.class);
         job.setMapperClass(R1Mapper.class);

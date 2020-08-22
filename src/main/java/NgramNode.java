@@ -6,6 +6,7 @@ public class NgramNode {
     private int headIndex;
 
     public NgramNode(String ngram){
+        try {
         Stemmer stemmer = new Stemmer();
         String[] fields = ngram.split("/");
         char[] wordAsChar = fields[0].toCharArray();
@@ -19,6 +20,10 @@ public class NgramNode {
         postTag = fields[1];
         depLabel = fields[2];
         headIndex = Integer.parseInt(fields[3]);
+        } catch (Exception e){
+            System.out.println(ngram);
+            System.out.println(e.getMessage());
+        }
     }
 
     public NgramNode(String word, String postTag, String depLabel, int headIndex) {
