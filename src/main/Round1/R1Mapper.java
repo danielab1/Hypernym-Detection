@@ -32,10 +32,16 @@ public class R1Mapper extends Mapper<LongWritable, Text, Text, Text> {
         String[] ngramArray = ngramsEncoded.split("/");
         if(ngramArray.length!=4)
             return false;
-        if (!ngramArray[0].contains("[^a-zA-Z ]"))
-            return false;
-        return !ngramArray[0].contains("[^a-zA-Z ]");
+        return isAlphanumeric(ngramArray[0]) && isAlphanumeric(ngramArray[1]);
+    }
+    private boolean isAlphanumeric(String str) {
+        for (int i=0; i<str.length(); i++) {
+            char c = str.charAt(i);
+            if (c < 0x30 || (c >= 0x3a && c <= 0x40) || (c > 0x5a && c <= 0x60) || c > 0x7a)
+                return false;
+        }
 
+        return true;
     }
 
     private void findDepPath(Context context, NgramNode[] ngrams, NgramNode startNode) throws IOException, InterruptedException {

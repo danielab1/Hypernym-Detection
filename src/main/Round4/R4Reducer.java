@@ -36,8 +36,8 @@ public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
         String keyPair = key.getPair().toString();
         if(!keyPair.equals(lastPair)){
             String annotation = "NA";
-            if(annotatedSet.containsKey(keyPair)){
-                annotation = annotatedSet.get(keyPair).toString();
+            if(containsKey(keyPair)){
+                annotation = getKey(keyPair);
             }
             context.write(key.getPair(), new Text("-1,"+annotation));
             lastPair = keyPair;
@@ -46,6 +46,22 @@ public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
         for(LongWritable count: values){
             context.write(key.getPair(), new Text(key.getDpInd()+","+count));
         }
+    }
+
+    public boolean containsKey(String key){
+        String[] pair = key.split("-");
+        String keyString = pair[0] + " " + pair[1];
+        String reverseKey = pair[1] + " " + pair[0];
+        return annotatedSet.containsKey(keyString) || annotatedSet.containsKey(reverseKey);
+    }
+
+    public String getKey(String key){
+        String[] pair = key.split("-");
+        String keyString = pair[0] + " " + pair[1];
+        String reverseKey = pair[1] + " " + pair[0];
+        Boolean res = annotatedSet.get(keyString);
+        Boolean reverseRes = annotatedSet.get(reverseKey);
+        return res== null ? reverseRes.toString() : res.toString();
     }
 
     @Override
