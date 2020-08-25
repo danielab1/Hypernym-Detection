@@ -76,6 +76,7 @@ public class R3Reducer extends Reducer<PairedKey, LongWritable, Text, Text> {
                 }
 
             }
+            reader.close();
 
         } catch (AmazonServiceException e) {
             System.out.println(e.getErrorMessage());

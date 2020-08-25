@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
+    private static Hashtable<String,Boolean> annotatedSet = new Hashtable<>();
     public static void main(String[] args) throws IOException, InterruptedException {
         AmazonElasticMapReduce emr = AmazonElasticMapReduceClientBuilder
                 .standard()
@@ -80,7 +81,7 @@ public class Main {
                 .withPlacement(new PlacementType("us-east-1a"));
 
         RunJobFlowRequest runFlowRequest = new RunJobFlowRequest()
-                .withName("TestJob")
+                .withName("dspAss3")
                 .withInstances(instances)
                 .withSteps(step1Config,step2Config,step3Config,step4Config)
                 .withJobFlowRole("EMR_EC2_DefaultRole")
@@ -94,22 +95,39 @@ public class Main {
         System.out.println("Ran job flow with id: " + jobFlowId);
 
 
-//        Hashtable<String,HashSet<Text>> set = new Hashtable<>();
-//
-//        File myObj = new File(args[0]);
+//        String stemmed = stemWord("schizophren");
+//        String stemmed2 = stemWord("schizophrenia");
+//        System.out.println(stemmed + " " + stemmed2);
+//        System.out.println(Boolean.parseBoolean("True"));
+//        File myObj = new File("hypernym.txt");
 //        Scanner myReader = new Scanner(myObj);
+//
 //        while (myReader.hasNextLine()) {
-//            String data = myReader.nextLine();
-//            String[] ngramLine = data.split("\t");
-//            String[] ngramsEncoded = ngramLine[1].split(" ");
-//            NgramNode[] ngrams = new NgramNode[ngramsEncoded.length + 1];
-//            for (int i = 1; i <= ngramsEncoded.length; i++) {
-//                ngrams[i] = new NgramNode(ngramsEncoded[i - 1]);
+//            String line = myReader.nextLine();
+//            String[] content = line.split("\t");
+//            String pair = stemWord(content[0])+" "+stemWord(content[1]);
+//            annotatedSet.putIfAbsent(pair, Boolean.parseBoolean(content[2]));
+//
+//        }
+//        myReader.close();
+//        myObj = new File("part-r-00012");
+//        myReader = new Scanner(myObj);
+//         String lastPair = null;
+//        while (myReader.hasNextLine()) {
+//            String line = myReader.nextLine();
+//            String[] content = line.split("\t");
+//            String keyPair = content[0];
+//            if (!keyPair.equals(lastPair)) {
+//                String annotation = "NA";
+//                if (containsKey(keyPair)) {
+//                    annotation = getKey(keyPair);
+//                }
+//                System.out.println(keyPair + " " + "-1," + annotation);
+//                lastPair = keyPair;
 //            }
 //
-//            for (int i = 1; i < ngrams.length; i++) {
-//                findDepPath(ngrams, ngrams[i]);
-//            }
+//                System.out.println(keyPair + " " + content[1]);
+//
 //        }
 //        myReader.close();
 //
@@ -153,21 +171,26 @@ public class Main {
 
 
     }
-        private static void findDepPath (NgramNode[]ngrams, NgramNode startNode) throws IOException {
-            if (!startNode.getPostTag().contains("NN")) return;
-            NgramNode curr = ngrams[startNode.getHeadIndex()];
-            String dp = startNode.getPostTag();
-            BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt", true));
-            while (curr != null) {
-                dp = curr.getPostTag() + "-" + dp;
-                if (curr.getPostTag().contains("NN")) {
-                    writer.write(dp + "\t" + curr.getWord() + "-" + startNode.getWord() + "\n");
-                }
-                curr = ngrams[curr.getHeadIndex()];
-            }
-            writer.close();
-
-        }
+    private static String stemWord(String wordRaw){
+        Stemmer stemmer = new Stemmer();
+        char[] wordAsChar = wordRaw.toCharArray();
+        stemmer.add(wordAsChar, wordAsChar.length);
+        stemmer.stem();
+        return stemmer.toString();
+    }
+    private static boolean containsKey(String key){
+        String[] pair = key.split("-");
+        String keyString = pair[0] + " " + pair[1];
+        return annotatedSet.containsKey(keyString);
+    }
+    public static String getKey(String key){
+        String[] pair = key.split("-");
+        String keyString = pair[0] + " " + pair[1];
+        String reverseKey = pair[1] + " " + pair[0];
+        Boolean res = annotatedSet.get(keyString);
+        Boolean reverseRes = annotatedSet.get(reverseKey);
+        return res== null ? reverseRes.toString() : res.toString();
+    }
     }
 
 

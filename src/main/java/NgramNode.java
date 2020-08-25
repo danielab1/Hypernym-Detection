@@ -26,12 +26,6 @@ public class NgramNode {
         }
     }
 
-    public NgramNode(String word, String postTag, String depLabel, int headIndex) {
-        this.word = word;
-        this.postTag = postTag;
-        this.depLabel = depLabel;
-        this.headIndex = headIndex;
-    }
 
     public NgramNode(){
         this.word = null;
@@ -57,6 +51,6 @@ public class NgramNode {
     }
 
     public String toString(){
-        return word + " " + postTag + " " + depLabel + " " + String.valueOf(headIndex);
+        return word + " " + postTag + " " + depLabel + " " + headIndex;
     }
 }

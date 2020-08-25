@@ -36,8 +36,8 @@ public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
         String keyPair = key.getPair().toString();
         if(!keyPair.equals(lastPair)){
             String annotation = "NA";
-            if(containsKey(keyPair)){
-                annotation = getKey(keyPair);
+            if(annotatedSet.containsKey(keyPair)){
+                annotation = annotatedSet.get(keyPair).toString();
             }
             context.write(key.getPair(), new Text("-1,"+annotation));
             lastPair = keyPair;
@@ -48,21 +48,8 @@ public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
         }
     }
 
-    public boolean containsKey(String key){
-        String[] pair = key.split("-");
-        String keyString = pair[0] + " " + pair[1];
-        String reverseKey = pair[1] + " " + pair[0];
-        return annotatedSet.containsKey(keyString) || annotatedSet.containsKey(reverseKey);
-    }
 
-    public String getKey(String key){
-        String[] pair = key.split("-");
-        String keyString = pair[0] + " " + pair[1];
-        String reverseKey = pair[1] + " " + pair[0];
-        Boolean res = annotatedSet.get(keyString);
-        Boolean reverseRes = annotatedSet.get(reverseKey);
-        return res== null ? reverseRes.toString() : res.toString();
-    }
+
 
     @Override
     public void cleanup(Context context)  throws IOException, InterruptedException {
@@ -88,7 +75,7 @@ public class R4Reducer extends Reducer<FeaturePair, LongWritable, Text, Text> {
                     break;
 
                 String[] content = line.split("\t");
-                String pair = stemWord(content[0])+" "+stemWord(content[1]);
+                String pair = stemWord(content[0])+"-"+stemWord(content[1]);
                 annotatedSet.putIfAbsent(pair, Boolean.parseBoolean(content[2]));
 
             }
