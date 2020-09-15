@@ -8,11 +8,9 @@ import java.io.IOException;
 
 public class R2Reducer extends Reducer<Text,Text,LongWritable, Text> {
     private long index = 0;
-    private MultipleOutputs mos;
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        mos = new MultipleOutputs<>(context);
 
     }
 
@@ -23,9 +21,6 @@ public class R2Reducer extends Reducer<Text,Text,LongWritable, Text> {
 
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
-        mos.write("featureVectorSize",index,new Text(""),"/featureVectorSize/part");
-        mos.close();
-
     }
 
 

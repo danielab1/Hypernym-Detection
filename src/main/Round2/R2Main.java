@@ -30,7 +30,6 @@ public class R2Main { //ROUND for merge all the DP to one file.
          FileOutputFormat.setOutputPath(job, new Path(args[2]));
 
          job.setInputFormatClass(KeyValueTextInputFormat.class);
-         MultipleOutputs.addNamedOutput(job,"featureVectorSize", TextOutputFormat.class,Text.class,Text.class);
          job.setOutputFormatClass(TextOutputFormat.class);
 
          System.exit(job.waitForCompletion(true) ? 0 : 1);
